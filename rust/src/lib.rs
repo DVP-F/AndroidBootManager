@@ -2,7 +2,7 @@
 
 use jni::objects::JClass;
 use jni::sys::{jboolean, jint};
-use jni::JNIEnv;
+use jni::EnvUnowned; // instead of deprecated JNIEnv - stick to ffi safe if possible
 
 mod boot;
 mod error;
@@ -11,12 +11,12 @@ mod hal;
 use boot::BootManager;
 
 fn as_jboolean(v: bool) -> jboolean {
-    if v { 1 } else { 0 }
+    if v { true } else { false }
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_example_bootslot_BootNative_nativeGetCurrentSlot(
-    _env: JNIEnv,
+pub extern "system" fn Java_com_carnx_bootmanager_BootNative_nativeGetCurrentSlot(
+    _env: EnvUnowned,
     _class: JClass,
 ) -> jint {
     match BootManager::default().get_current_slot() {
@@ -26,8 +26,8 @@ pub extern "system" fn Java_com_example_bootslot_BootNative_nativeGetCurrentSlot
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_example_bootslot_BootNative_nativeSetActiveSlot(
-    _env: JNIEnv,
+pub extern "system" fn Java_com_carnx_bootmanager_BootNative_nativeSetActiveSlot(
+    _env: EnvUnowned,
     _class: JClass,
     slot: jint,
 ) -> jboolean {

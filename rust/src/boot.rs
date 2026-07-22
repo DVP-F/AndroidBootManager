@@ -10,7 +10,10 @@ pub struct BootManager {
 impl Default for BootManager {
     fn default() -> Self {
         Self {
-            backend: Box::new(HalBootControl::new().unwrap_or_else(|_| FakeBootControl::new())),
+            backend: match HalBootControl::new() {
+                Ok(hal) => Box::new(hal),
+                Err(_) => Box::new(FakeBootControl::new()),
+            },
         }
     }
 }
