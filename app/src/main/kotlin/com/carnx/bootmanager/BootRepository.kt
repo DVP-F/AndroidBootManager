@@ -1,4 +1,4 @@
-package com.example.bootslot
+package com.carnx.bootmanager
 
 class BootRepository {
     fun currentSlot(): Int = BootNative.nativeGetCurrentSlot()

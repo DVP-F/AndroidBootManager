@@ -1,4 +1,4 @@
-package com.example.bootslot
+package com.carnx.bootmanager
 
 import android.os.Bundle
 import android.widget.Button

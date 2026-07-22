@@ -1,4 +1,4 @@
-package com.example.bootslot
+package com.carnx.bootmanager
 
 object BootNative {
     init {
