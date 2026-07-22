@@ -2,6 +2,7 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("com.github.willir.rust.cargo-ndk-android")
+    id("org.jetbrains.kotlin.plugin.compose")
 }
 
 android {
@@ -10,10 +11,14 @@ android {
     
     defaultConfig {
         applicationId = "com.carnx.bootslot"
-        minSdk = 29
+        minSdk = 28
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
+    }
+
+    buildFeatures {
+        compose = true
     }
     
     buildTypes {
@@ -33,22 +38,31 @@ android {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
-    
+
     kotlinOptions {
         jvmTarget = "17"
+    }
+
+    dependencies {
+        implementation(platform("androidx.compose:compose-bom:2024.09.03"))
+
+        implementation("androidx.activity:activity-compose:1.9.2")
+
+        implementation("androidx.compose.ui:ui")
+        implementation("androidx.compose.ui:ui-tooling-preview")
+        implementation("androidx.compose.material3:material3")
+
+        debugImplementation("androidx.compose.ui:ui-tooling")
     }
 }
 
 cargoNdk {
-    module = "../rust"
+    module = "rust"
     apiLevel = 29
-    targets = ["arm64", "arm", "x86_64", "x86"]
-    buildTypes {
-        debug {
-            buildType = "debug"
-        }
-        release {
-            buildType = "release"
-        }
-    }
+    targets = arrayListOf(
+        "arm64",
+        "arm",
+        "x86_64",
+        "x86"
+    )
 }

@@ -1,4 +1,4 @@
-<manifest package="com.canrx.bootmanager" xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <application android:label="BootManager">
         <activity android:name=".MainActivity" android:exported="true">
             <intent-filter>

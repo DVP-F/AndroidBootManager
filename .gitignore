@@ -19,3 +19,5 @@ gradlew
 */target/*
 rust/target/
 *.lock
+app/build*
+.idea*
