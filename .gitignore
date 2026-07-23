@@ -15,3 +15,4 @@ gradle/
 gradlew
 .vs*
 *.lock
+*jniLibs*

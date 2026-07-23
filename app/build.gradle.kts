@@ -59,20 +59,8 @@ dependencies {
 }
 
 tasks.register<Exec>("buildRust") {
-    workingDir = file("../rust")
-
-    commandLine(
-        // fucker doesnt wanna work with me here it seems. but all paths are ight and it does have the correct env on my system
-        "cargo",
-        "ndk",
-        "-t", "arm64-v8a",
-        "-t", "armeabi-v7a",
-        "-t", "x86",
-        "-t", "x86_64",
-        "-o", "../app/src/main/jniLibs",
-        "build",
-        "--release"
-    )
+    executable = "/bin/sh" // explicit posix shell call bc its more likely to actually be here
+    args("${rootDir}/scripts/cargoBuild.sh")
 }
 
 tasks.named("preBuild") {
