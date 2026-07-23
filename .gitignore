@@ -11,8 +11,8 @@ app/build*
 rust/target/
 .externalNativeBuild
 .cxx
-gradle/
-gradlew
+gradle/wrapper*
 .vs*
 *.lock
 *jniLibs*
+.kotlin*

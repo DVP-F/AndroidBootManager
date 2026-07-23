@@ -8,7 +8,6 @@ _STARTDIR=$(pwd)
 cd "$(dirname "$0")/../rust"
 
 # cargo install cargo-ndk
-## tested with 3.5.4 and 4.1.2
 
 # rustup target add aarch64-linux-android armv7-linux-androideabi i686-linux-android x86_64-linux-android
 
