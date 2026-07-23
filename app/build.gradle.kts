@@ -59,8 +59,7 @@ dependencies {
 }
 
 tasks.register<Exec>("buildRust") {
-    executable = "/bin/sh" // explicit posix shell call bc its more likely to actually be here
-    args("${rootDir}/scripts/cargoBuild.sh")
+    executable = "${rootDir}/scripts/cargoBuild.sh"
 }
 
 tasks.named("preBuild") {
