@@ -7,11 +7,11 @@ plugins {
 }
 
 android {
-    namespace = "com.carnx.bootslot"
+    namespace = "com.carnx.bootmanager"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.carnx.bootslot"
+        applicationId = "com.carnx.bootmanager"
         minSdk = 28
         targetSdk = 34
         versionCode = 1

@@ -1,4 +1,4 @@
-package dvpdevs.carnx.bootmanager
+package com.carnx.bootmanager
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
