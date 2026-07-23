@@ -44,7 +44,8 @@ fun Main(modifier: Modifier = Modifier) {
     ) {
         // rendered objects have their DEFINITION inside here.
         // can still be saved to a variable handle tho
-        
+        Text("yooo wass gud dawgg")
+
     }
 }
 
