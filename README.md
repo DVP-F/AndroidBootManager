@@ -22,7 +22,7 @@ gradle and project setup occurred through android studio.
 
 significant versions:  
 
-- java (OpenJDK) v17.0.15-ea 2025-04-15 (+5-Debian-1)
+- JDK (OpenJDK) v17.0.15-ea 2025-04-15 (+5-Debian-1)
 - gradle v9.4.1
 - kotlin v2.0.20
 - cargo v1.97.1 (c980f4866 2026-06-30)

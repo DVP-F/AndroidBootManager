@@ -1,15 +1,27 @@
 #!/usr/bin/env bash
 
-set -euo pipefail
-# optional debug
-#*set -x
+set -euxo pipefail
 
 _STARTDIR=$(pwd)
 
-# okay so this shouldnt be necessary outside of debugging but android studio uses a protected non-userspace env for execution THUS:
-CARGO="$(command -v cargo 2>/dev/null || printf '%s' "$HOME/.cargo/bin/cargo")"
+echo "PWD: $(pwd)"
+echo "HOME: $HOME"
+echo "PATH: $PATH"
 
-# expect the call to be roughly "/bin/sh /path/to/this/script.sh"
+CARGO="$HOME/.cargo/bin/cargo"
+
+# fuck fallbacks this is where rustup normally installs cargo iirc so imma force this location
+if [[ ! -x "$CARGO" ]]; then
+    echo "Rust cargo not found at $CARGO"
+    exit 1
+fi
+
+echo "cargo: $(which "$CARGO") ; $CARGO"
+
+"$CARGO" --version
+"$CARGO" ndk --version
+
+# expect the call to be roughly "/absolute/path/here"
 # so we move relative to the scripts dir into the rust dir
 cd "$(dirname "$0")/../rust"
 
