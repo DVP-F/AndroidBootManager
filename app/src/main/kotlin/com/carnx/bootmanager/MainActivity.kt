@@ -5,27 +5,33 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.tooling.preview.Preview
 import com.carnx.bootmanager.BootManagerTheme
 
-// main class and define main function call
 class MainActivity : ComponentActivity() {
+
+    private val repo = BootRepository()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+        //enableEdgeToEdge()
+
         setContent {
             BootManagerTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     Main(
+                        repo = repo,
                         modifier = Modifier.padding(innerPadding)
                     )
                 }
@@ -34,26 +40,64 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-// main function (define UI)
 @Composable
-fun Main(modifier: Modifier = Modifier) {
-    Column(
-        modifier = modifier.padding(16.dp),
-        verticalArrangement = Arrangement.Top,
-        horizontalAlignment = Alignment.Start
+fun Main(
+    repo: BootRepository,
+    modifier: Modifier = Modifier
+) {
+    var status by remember {
+        mutableStateOf("Current boot slot: ${repo.currentSlot()}")
+    }
+    Box(
+        modifier = modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
     ) {
-        // rendered objects have their DEFINITION inside here.
-        // can still be saved to a variable handle tho
-        Text("yooo wass gud dawgg")
+        Column(
+            modifier = modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
 
+            Text(text = status)
+
+            Button(onClick = {
+                status = if (repo.switchTo(0))
+                    "Set slot A"
+                else
+                    "Failed"
+            }) {
+                Text("Set to slot A (0)")
+            }
+
+            Button(onClick = {
+                status = if (repo.switchTo(1))
+                    "Set slot B"
+                else
+                    "Failed"
+            }) {
+                Text("Set to slot B (1)")
+            }
+        }
     }
 }
 
-// for preview within studio
+//* preview within Android Studio.
+//! Update on significant changes only.
 @Preview(showBackground = true)
 @Composable
 fun MainPreview() {
     BootManagerTheme {
-        Main()
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            Text("Current slot: A")
+            Button(onClick = {}) {
+                Text("Boot slot A")
+            }
+            Button(onClick = {}) {
+                Text("Boot slot B")
+            }
+        }
     }
 }
