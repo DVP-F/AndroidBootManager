@@ -5,8 +5,9 @@ ships without gradle wrapper but with gradlew and gradle info/config
 licenses:  
 found under [LICENSES](/LICENSES/)
 
+- BootManager ; GPLv3
 - gradlew ; Apache-2.0
-- BootManager ; GPL-3.0
+- Reload icon ; MIT
 
 missing for complete workspace:  
 

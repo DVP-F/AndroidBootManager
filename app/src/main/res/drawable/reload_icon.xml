@@ -1,0 +1,28 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="800dp"
+    android:height="800dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+  <!--
+    Source: SVG Repo - Reload UI
+    https://www.svgrepo.com/svg/487721/reload-ui
+
+    Original author:
+    Neuicons
+    https://github.com/neuicons/neu
+
+    Licensed under the MIT License.
+    Distributed via SVG Repo:
+    https://www.svgrepo.com/
+
+    Original SVG comment:
+    "Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools"
+
+    Converted from SVG to Android drawable XML.
+    No changes made to the original vector paths.
+  -->
+  <!-- SPDX-License-Identifier: MIT -->
+  <path
+      android:pathData="M23,12A11,11 0,1 1,12 1a10.9,10.9 0,0 1,5.882 1.7l1.411,-1.411A1,1 0,0 1,21 2V6a1,1 0,0 1,-1 1H16a1,1 0,0 1,-0.707 -1.707L16.42,4.166A8.9,8.9 0,0 0,12 3a9,9 0,1 0,9 9,1 1,0 0,1 2,0Z"
+      android:fillColor="#FFFFFF"/>
+</vector>
