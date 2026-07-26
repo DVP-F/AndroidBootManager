@@ -90,8 +90,7 @@ fun Main(
     // define UI
 
     var status by remember {
-        // remapping to more useful labels. 0 = A ; 1 = B
-        mutableStateOf(repo.currentSlot())
+        mutableStateOf(repo.currentSlot().msg)
     }
 
     Box(
@@ -133,14 +132,14 @@ fun Main(
                 colArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 Button(
-                    onClick = {status = if (repo.switchTo(slot=0)) "Set boot slot to A" else "Failed to load"},
+                    onClick = {status = repo.switchTo(0).msg},
                     )
                 {
                     Text("Set to slot A (0)")
                 }
 
                 Button(
-                    onClick = {status = if (repo.switchTo(slot=0)) "Set boot slot to A" else "Failed to load"},
+                    onClick = {status = repo.switchTo(1).msg},
                     )
                 {
                     Text("Set to slot B (1)")
