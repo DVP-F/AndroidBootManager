@@ -11,12 +11,12 @@ echo "PATH: $PATH"
 CARGO="$HOME/.cargo/bin/cargo"
 
 # fuck fallbacks this is where rustup normally installs cargo iirc so imma force this location
+#? consider calling cargo through rustup instead - more likely to resolve correctly and can still use a fallback thru default location and then cargo itself
+
 if [[ ! -x "$CARGO" ]]; then
     echo "Rust cargo not found at $CARGO"
     exit 1
 fi
-
-echo "cargo: $(which "$CARGO") ; $CARGO"
 
 "$CARGO" --version
 "$CARGO" ndk --version

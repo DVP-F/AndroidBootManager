@@ -1,23 +1,30 @@
 package com.carnx.bootmanager
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.tooling.preview.Preview
-import com.carnx.bootmanager.BootManagerTheme
 
 class MainActivity : ComponentActivity() {
 
@@ -40,42 +47,104 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+@SuppressLint("UnusedBoxWithConstraintsScope") // ignore 'dead' code
+@Composable
+fun ResponsiveLayoutBox(
+    rowAlignment: Alignment.Vertical = Alignment.Top,
+    rowArrangement: Arrangement.Horizontal = Arrangement.Start,
+    colAlignment: Alignment.Horizontal = Alignment.Start,
+    colArrangement: Arrangement.Vertical = Arrangement.Top,
+    content: @Composable () -> Unit
+) {
+    // Rearrange in case of landscape view
+    BoxWithConstraints (
+        modifier = Modifier,
+        contentAlignment = Alignment.Center // maintain alignment "relative to super"
+    ) {
+        val isLandscape = maxWidth > maxHeight
+        if (isLandscape) {
+            Row (
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = rowAlignment,
+                horizontalArrangement = rowArrangement
+            ) {
+                content()
+            }
+        } else {
+            Column (
+                modifier = Modifier.fillMaxHeight(),
+                verticalArrangement = colArrangement,
+                horizontalAlignment = colAlignment
+            ) {
+                content()
+            }
+        }
+    }
+}
+
 @Composable
 fun Main(
     repo: BootRepository,
     modifier: Modifier = Modifier
 ) {
+    // define UI
+
     var status by remember {
-        mutableStateOf("Current boot slot: ${repo.currentSlot()}")
+        // remapping to more useful labels. 0 = A ; 1 = B
+        mutableStateOf(repo.currentSlot())
     }
+
     Box(
         modifier = modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
+        val configuration = LocalConfiguration.current
+        val screenWidth = configuration.screenWidthDp.dp
+        val screenHeight = configuration.screenHeightDp.dp
+
         Column(
-            modifier = modifier.padding(16.dp),
+            modifier = Modifier
+                .width(screenWidth * 0.8f)
+                .height(screenHeight * 0.8f)
+                .padding(16.dp, 16.dp, 16.dp, 32.dp)
+            ,
             verticalArrangement = Arrangement.spacedBy(12.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
-            Text(text = status)
-
-            Button(onClick = {
-                status = if (repo.switchTo(0))
-                    "Set slot A"
-                else
-                    "Failed"
-            }) {
-                Text("Set to slot A (0)")
+            Row (
+                modifier = Modifier,
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                Text(text = status)
+                Button (
+                    onClick = {}
+                    )
+                {
+                    Text(text = "Reload ꭷⳲල")
+                }
             }
 
-            Button(onClick = {
-                status = if (repo.switchTo(1))
-                    "Set slot B"
-                else
-                    "Failed"
-            }) {
-                Text("Set to slot B (1)")
+            ResponsiveLayoutBox (
+                // preserve alignment
+                rowAlignment = Alignment.CenterVertically,
+                rowArrangement = Arrangement.spacedBy(12.dp),
+                colAlignment = Alignment.CenterHorizontally,
+                colArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                Button(
+                    onClick = {status = if (repo.switchTo(slot=0)) "Set boot slot to A" else "Failed to load"},
+                    )
+                {
+                    Text("Set to slot A (0)")
+                }
+
+                Button(
+                    onClick = {status = if (repo.switchTo(slot=0)) "Set boot slot to A" else "Failed to load"},
+                    )
+                {
+                    Text("Set to slot B (1)")
+                }
             }
         }
     }
@@ -88,15 +157,15 @@ fun Main(
 fun MainPreview() {
     BootManagerTheme {
         Column(
-            modifier = Modifier.padding(16.dp),
+            modifier = Modifier.padding(16.dp, 16.dp, 16.dp, 32.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            Text("Current slot: A")
+            Text("Current boot slot: A")
             Button(onClick = {}) {
-                Text("Boot slot A")
+                Text("Set to slot A (0)")
             }
             Button(onClick = {}) {
-                Text("Boot slot B")
+                Text("Set to slot B (1)")
             }
         }
     }
