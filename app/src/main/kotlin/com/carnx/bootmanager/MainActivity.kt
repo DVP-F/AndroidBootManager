@@ -61,6 +61,7 @@ fun ResponsiveLayoutBox(
     rowArrangement: Arrangement.Horizontal = Arrangement.Start,
     colAlignment: Alignment.Horizontal = Alignment.Start,
     colArrangement: Arrangement.Vertical = Arrangement.Top,
+    vararg spacerWeights: Float = FloatArray(4),
     content: @Composable () -> Unit
 ) {
     // Rearrange in case of landscape view
@@ -75,7 +76,23 @@ fun ResponsiveLayoutBox(
                 verticalAlignment = rowAlignment,
                 horizontalArrangement = rowArrangement
             ) {
+                Spacer(
+                    modifier = Modifier.then(
+                        if (spacerWeights[0] > 0f)
+                            Modifier.weight(spacerWeights[0]).width(0.dp)
+                        else
+                            Modifier
+                    )
+                )
                 content()
+                Spacer(
+                    modifier = Modifier.then(
+                        if (spacerWeights[1] > 0f)
+                            Modifier.weight(spacerWeights[1]).width(0.dp)
+                        else
+                            Modifier
+                    )
+                )
             }
         } else {
             Column (
@@ -83,7 +100,23 @@ fun ResponsiveLayoutBox(
                 verticalArrangement = colArrangement,
                 horizontalAlignment = colAlignment
             ) {
+                Spacer(
+                    modifier = Modifier.then(
+                        if (spacerWeights[2] > 0f)
+                            Modifier.weight(spacerWeights[2]).width(0.dp)
+                        else
+                            Modifier
+                    )
+                )
                 content()
+                Spacer(
+                    modifier = Modifier.then(
+                        if (spacerWeights[3] > 0f)
+                            Modifier.weight(spacerWeights[3]).width(0.dp)
+                        else
+                            Modifier
+                    )
+                )
             }
         }
     }
@@ -143,7 +176,8 @@ fun Main(
                 rowAlignment = Alignment.CenterVertically,
                 rowArrangement = Arrangement.spacedBy(12.dp),
                 colAlignment = Alignment.CenterHorizontally,
-                colArrangement = Arrangement.spacedBy(12.dp)
+                colArrangement = Arrangement.spacedBy(12.dp),
+                spacerWeights = floatArrayOf(0.5f, 0.5f, 0f, 0f)
             ) {
                 Button(
                     onClick = {status = repo.switchTo(0).msg},

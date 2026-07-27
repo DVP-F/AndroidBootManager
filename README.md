@@ -22,6 +22,10 @@ see [NOTICE.md](/NOTICE.md)
 - gradle wrapper ; Apache-2.0  
 - Reload icon ; MIT   
 
+## Build targets  
+
+Written to be compatible with Android 8+, Android API 28+
+
 ## Versions and dependencies  
 
 significant program versions:  
