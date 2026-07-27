@@ -2,9 +2,15 @@
 
 Copyright (c) 2026 DVP-F/Carnx00  
 Licensed under the GNU General Public License v3.0 (GPLv3).  
-SPDX-License-Identifier: GPLv3
+SPDX-License-Identifier: GPL-3.0-only
 
 ships with gradlew and gradle info/config  
+
+missing for complete workspace:  
+
+- local.properties (sdk and ndk directories)  
+
+gradle and project setup occurred through android studio. 
 
 ## Licenses  
 
@@ -14,13 +20,7 @@ see [NOTICE.md](/NOTICE.md)
 
 - BootManager ; GPLv3  
 - gradle wrapper ; Apache-2.0  
-- Reload icon ; MIT  
-
-missing for complete workspace:  
-
-- local.properties (sdk and ndk directories)  
-
-gradle and project setup occurred through android studio.  
+- Reload icon ; MIT   
 
 ## Versions and dependencies  
 
