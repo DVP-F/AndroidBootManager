@@ -77,21 +77,17 @@ fun ResponsiveLayoutBox(
                 horizontalArrangement = rowArrangement
             ) {
                 Spacer(
-                    modifier = Modifier.then(
-                        if (spacerWeights[0] > 0f)
-                            Modifier.weight(spacerWeights[0]).width(0.dp)
-                        else
-                            Modifier
-                    )
+                    modifier = Modifier
+                        .then(if (spacerWeights[0] > 0f) Modifier.weight(spacerWeights[0]) else Modifier)
+                        .width(0.dp)
+                        .height(0.dp)
                 )
                 content()
                 Spacer(
-                    modifier = Modifier.then(
-                        if (spacerWeights[1] > 0f)
-                            Modifier.weight(spacerWeights[1]).width(0.dp)
-                        else
-                            Modifier
-                    )
+                    modifier = Modifier
+                        .then(if (spacerWeights[1] > 0f) Modifier.weight(spacerWeights[1]) else Modifier)
+                        .width(0.dp)
+                        .height(0.dp)
                 )
             }
         } else {
@@ -101,21 +97,17 @@ fun ResponsiveLayoutBox(
                 horizontalAlignment = colAlignment
             ) {
                 Spacer(
-                    modifier = Modifier.then(
-                        if (spacerWeights[2] > 0f)
-                            Modifier.weight(spacerWeights[2]).width(0.dp)
-                        else
-                            Modifier
-                    )
+                    modifier = Modifier
+                        .then(if (spacerWeights[2] > 0f) Modifier.weight(spacerWeights[2]) else Modifier)
+                        .width(0.dp)
+                        .height(0.dp)
                 )
                 content()
                 Spacer(
-                    modifier = Modifier.then(
-                        if (spacerWeights[3] > 0f)
-                            Modifier.weight(spacerWeights[3]).width(0.dp)
-                        else
-                            Modifier
-                    )
+                    modifier = Modifier
+                        .then(if (spacerWeights[3] > 0f) Modifier.weight(spacerWeights[3]) else Modifier)
+                        .width(0.dp)
+                        .height(0.dp)
                 )
             }
         }
