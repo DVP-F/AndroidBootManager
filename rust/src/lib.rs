@@ -1,5 +1,9 @@
 // JNI bridge with a tiny Rust API
 
+//* Copyright (c) 2026 DVP-F/Carnx00  
+//* Licensed under the GNU General Public License v3.0 (GPLv3).  
+//* SPDX-License-Identifier: GPLv3
+
 use jni::objects::JClass;
 use jni::sys::{jboolean, jint};
 use jni::EnvUnowned; // instead of deprecated JNIEnv - stick to ffi safe if possible

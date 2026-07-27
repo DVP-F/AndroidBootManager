@@ -1,5 +1,9 @@
 package com.carnx.bootmanager
 
+//* Copyright (c) 2026 DVP-F/Carnx00  
+//* Licensed under the GNU General Public License v3.0 (GPLv3).  
+//* SPDX-License-Identifier: GPLv3
+
 import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity

@@ -59,7 +59,7 @@ dependencies {
 }
 
 tasks.register<Exec>("buildRust") {
-    executable = "${rootDir}/scripts/cargoBuild.sh"
+    executable = "${rootDir}/scripts/cargo/build.sh"
 }
 
 tasks.named("preBuild") {
