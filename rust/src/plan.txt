@@ -1,0 +1,61 @@
+Here’s the clean design: define one Rust trait, try an **AIDL backend first**, and fall back to the legacy **boot_control HAL via FFI** when AIDL is unavailable. That fits Android 8+ better because the legacy HAL definitely exists on older devices, while AIDL is the preferred newer path. [source.android](https://source.android.com/reference/hal/structboot__control__module)
+
+## Rust shape
+
+```rust
+pub trait BootSlotControl {
+    fn current_slot(&self) -> anyhow::Result<u32>;
+    fn set_active_slot(&self, slot: u32) -> anyhow::Result<()>;
+    fn mark_boot_successful(&self) -> anyhow::Result<()>;
+}
+```
+
+Then implement:
+
+- `AidlBootSlotControl` for devices that expose a boot-related AIDL service. [source.android](https://source.android.com/docs/core/architecture/aidl/stable-aidl)
+- `FfiBootSlotControl` for the `boot_control_module_t` HAL used on Android 8-era devices. [android.googlesource](https://android.googlesource.com/platform/hardware/libhardware/+/android16-qpr2-release/include_all/hardware/boot_control.h)
+
+## Fallback logic
+
+```rust
+pub enum BootSlotBackend {
+    Aidl(AidlBootSlotControl),
+    Ffi(FfiBootSlotControl),
+}
+
+impl BootSlotBackend {
+    pub fn open() -> anyhow::Result<Self> {
+        if let Ok(aidl) = AidlBootSlotControl::connect() {
+            return Ok(Self::Aidl(aidl));
+        }
+        Ok(Self::Ffi(FfiBootSlotControl::load()?))
+    }
+}
+```
+
+That gives you one API surface while keeping device-specific details hidden. Stable AIDL is the modern IPC path, but the C HAL remains the compatibility layer for slot operations. [source.android](https://source.android.com/docs/core/architecture/aidl)
+
+## FFI backend
+
+The legacy HAL exposes exactly what you need: `getCurrentSlot`, `setActiveBootSlot`, and `markBootSuccessful`. The HAL contract also guarantees slot numbers are zero-based and less than `getNumberSlots()`. [android.googlesource](https://android.googlesource.com/platform/hardware/libhardware/+/android16-qpr2-release/include_all/hardware/boot_control.h)
+
+A Rust FFI wrapper typically:
+
+1. Loads the HAL module.
+2. Stores the `boot_control_module_t` pointer.
+3. Calls function pointers like `getCurrentSlot(module)` and `setActiveBootSlot(module, slot)`. [doc.rust-lang](https://doc.rust-lang.org/nomicon/ffi.html)
+
+## AIDL backend
+
+Use AIDL only when the device actually exposes the service you need. Android documents AIDL as the general IPC mechanism and stable AIDL as the supported interface style for system/vendor boundaries. [source.android](https://source.android.com/docs/core/architecture/aidl/stable-aidl)
+
+Because boot-slot control on Android 8 devices is usually still the legacy C HAL, the AIDL backend should be treated as an optional fast path, not a requirement. [android.googlesource](https://android.googlesource.com/platform/hardware/interfaces/+/main/boot/1.0/IBootControl.hal)
+
+## Minimal plan
+
+- Check for AIDL service first.
+- If present, use it.
+- Otherwise, load `boot_control_module_t` through FFI.
+- Expose one Rust API for slot read/switch operations. [source.android](https://source.android.com/reference/hal/structboot__control__module)
+
+I can write the actual Rust trait, AIDL stub, and FFI loader next.

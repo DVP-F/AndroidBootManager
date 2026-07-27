@@ -1,0 +1,54 @@
+Yes — make the JNI library choose the backend at **compile time** with `cfg`, so newer targets build without the FFI code at all, while older Android 8 targets keep the legacy path. Rust’s conditional compilation removes the unmatched code from the build entirely, which is what you want for a smaller, cleaner binary. [doc.rust-lang](https://doc.rust-lang.org/reference/conditional-compilation.html)
+
+## Recommended layout
+
+Use a single public API and split the implementation into feature-gated modules:
+
+- `backend_aidl.rs` for the newer AIDL path.
+- `backend_ffi.rs` for the legacy `boot_control_module` path.
+- `mod.rs` or `lib.rs` selects one of them with `#[cfg(...)]`. [source.android](https://source.android.com/docs/core/architecture/aidl/stable-aidl)
+
+## Example structure
+
+```rust
+pub trait BootSlotControl {
+    fn current_slot(&self) -> anyhow::Result<u32>;
+    fn set_active_slot(&self, slot: u32) -> anyhow::Result<()>;
+}
+
+#[cfg(all(feature = "aidl", not(target_os = "android")))]
+mod backend_aidl;
+
+#[cfg(any(
+    feature = "legacy-ffi",
+    all(target_os = "android", not(feature = "aidl"))
+))]
+mod backend_ffi;
+```
+
+That lets you build a **pure Rust/AIDL** variant for newer targets and a separate FFI-enabled variant for older Android. `cfg` is compile-time, so the excluded backend never gets compiled into the crate. [doc.liz6](https://doc.liz6.com/en/rust/09-cargo-and-build/02-conditional-compilation-and-cfg)
+
+## Better cargo split
+
+A practical setup is:
+
+- Default feature: `legacy-ffi`
+- Optional feature: `aidl`
+- Optional feature: `force-ffi`
+
+Then your build matrix can do:
+
+- Newer targets: `--no-default-features --features aidl`
+- Old Android 8 targets: default build with `legacy-ffi`
+
+This is cleaner than probing at runtime inside JNI and avoids dragging FFI symbols into builds that do not need them. [doc.rust-lang](https://doc.rust-lang.org/reference/conditional-compilation.html)
+
+## JNI note
+
+Since the crate is compiled into a JNI library, the Android-facing Java/Kotlin side can stay identical. The native layer just exports the same JNI methods, while the internal Rust implementation changes based on `cfg`. That keeps the app-side API stable and gives you a faster native path on newer targets. [source.android](https://source.android.com/docs/setup/build/rust/building-rust-modules/android-rust-patterns)
+
+## Caveat
+
+Compile-time selection means the binary is chosen when you build it, not when the app starts. If you need one APK to support both old and new devices, you usually still need a runtime fallback path; if you can ship separate native builds per target class, compile-time gating is the best optimization. [doc.liz6](https://doc.liz6.com/en/rust/09-cargo-and-build/02-conditional-compilation-and-cfg)
+
+I can sketch the exact `Cargo.toml` feature setup and a minimal JNI/Rust module layout next.
