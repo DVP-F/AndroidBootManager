@@ -7,5 +7,7 @@
 mkdir -p "$(dirname "$0")/../../rust/aidl/android/hardware/boot"
 cd "$(dirname "$0")/../../rust/aidl/android/hardware/boot"
 
-curl 'https://android.googlesource.com/platform/hardware/interfaces/+/refs/heads/main/boot/aidl/android/hardware/boot/IBootControl.aidl?format=TEXT' | base64 -d > IBootControl.aidl
-curl 'https://android.googlesource.com/platform/hardware/interfaces/+/refs/heads/main/boot/aidl/android/hardware/boot/MergeStatus.aidl?format=TEXT' | base64 -d > MergeStatus.aidl
+curl 'https://android.googlesource.com/platform/hardware/interfaces/+/refs/heads/main/boot/aidl/android/hardware/boot/IBootControl.aidl?format=TEXT' | base64 -d 1> IBootControl.aidl
+curl 'https://android.googlesource.com/platform/hardware/interfaces/+/refs/heads/main/boot/aidl/android/hardware/boot/MergeStatus.aidl?format=TEXT' | base64 -d 1> MergeStatus.aidl
+
+cd "$(dirname "$0")"

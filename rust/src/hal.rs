@@ -5,12 +5,13 @@
 //* SPDX-License-Identifier: GPL-3.0-only
 
 use crate::error::{BootError, Result};
+use rsbinder::{get_interface, Strong};
+use crate::generated::aidl_boot::IBootControl::IBootControl;
 
 pub trait BootControl {
     #![allow(dead_code)]
     fn get_current_slot(&self) -> Result<u32>;
     fn set_active_boot_slot(&self, slot: u32) -> Result<()>;
-    fn mark_boot_successful(&self) -> Result<()>;
 }
 
 pub struct FakeBootControl;
@@ -29,17 +30,18 @@ impl BootControl for FakeBootControl {
     fn set_active_boot_slot(&self, _slot: u32) -> Result<()> {
         Ok(())
     }
-
-    fn mark_boot_successful(&self) -> Result<()> {
-        Ok(())
-    }
 }
 
-pub struct AidlBootControl;
+pub struct AidlBootControl {
+    boot: Strong<dyn IBootControl>,
+}
 
 impl AidlBootControl {
     pub fn new() -> Result<Self> {
-        Err(BootError::HalUnavailable)
+        let boot: Strong<dyn IBootControl> = 
+            get_interface("android.hardware.boot.IBootControl/default")
+            .map_err(|_| BootError::HalUnavailable)?;
+        Ok(Self { boot })
     }
 }
 
@@ -49,10 +51,6 @@ impl BootControl for AidlBootControl {
     }
 
     fn set_active_boot_slot(&self, _slot: u32) -> Result<()> {
-        Err(BootError::HalUnavailable)
-    }
-
-    fn mark_boot_successful(&self) -> Result<()> {
         Err(BootError::HalUnavailable)
     }
 }
