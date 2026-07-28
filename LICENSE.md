@@ -16,6 +16,7 @@ The following third-party licenses apply where applicable:
 
 - **MIT License** — SVG asset(s) by Royyan Wijaya
 - **Apache License 2.0** — Gradle Wrapper (Gradle Inc. and contributors)
+- **Apache License 2.0** — Android Open Source Project (AOSP) AIDL interface definition files (AOSP and contributors)
 
 See `NOTICE.md` for copyright attributions and additional licensing information.
 

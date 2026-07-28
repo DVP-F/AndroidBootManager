@@ -38,6 +38,10 @@ These files are licensed under the Apache License, Version 2.0. The full license
 
 [apache.org](https://www.apache.org/licenses/LICENSE-2.0)
 
+See also AOSP's License and Copyright guidance at:
+
+[source.android.com](https://source.android.com/docs/setup/contribute/licenses#follow_license_and_copyright_best_practices)
+
 ## License Relationship
 
 The third-party components listed above remain licensed under their respective licenses. Their inclusion in this project does not alter or replace the terms of those licenses.
