@@ -5,7 +5,7 @@
 //* SPDX-License-Identifier: GPL-3.0-only
 
 use crate::error::{BootError, Result};
-use crate::hal::{BootControl, FakeBootControl, HalBootControl};
+use crate::hal::{BootControl, FakeBootControl, AidlBootControl};
 
 pub struct BootManager {
     backend: Box<dyn BootControl + Send + Sync>,
@@ -14,7 +14,7 @@ pub struct BootManager {
 impl Default for BootManager {
     fn default() -> Self {
         Self {
-            backend: match HalBootControl::new() {
+            backend: match AidlBootControl::new() {
                 Ok(hal) => Box::new(hal),
                 Err(_) => Box::new(FakeBootControl::new()),
             },
@@ -28,7 +28,7 @@ impl BootManager {
     }
 
     pub fn set_active_slot(&self, slot: u32) -> Result<()> {
-        let slots = self.backend.get_number_slots()?;
+        let slots = 2u32;
         if slot >= slots {
             return Err(BootError::InvalidSlot { slot, slots });
         }

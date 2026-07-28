@@ -26,6 +26,18 @@ Licensed under the Apache License, Version 2.0. The full license text is include
 
 [apache.org](https://www.apache.org/licenses/LICENSE-2.0)
 
+### Android Open Source Project (AOSP) AIDL files
+
+This project includes AIDL interface definition files from the Android Open Source Project (AOSP).
+
+As of the time these files were imported, the included AOSP files carry the following copyright notice:
+
+Copyright (C) 2022 The Android Open Source Project
+
+These files are licensed under the Apache License, Version 2.0. The full license text is included with this project in the `LICENSES/` directory and is also available at:
+
+[apache.org](https://www.apache.org/licenses/LICENSE-2.0)
+
 ## License Relationship
 
 The third-party components listed above remain licensed under their respective licenses. Their inclusion in this project does not alter or replace the terms of those licenses.

@@ -13,6 +13,23 @@ pub trait BootSlotControl {
 Then implement:
 
 - `AidlBootSlotControl` for devices that expose a boot-related AIDL service. [source.android](https://source.android.com/docs/core/architecture/aidl/stable-aidl)
+
+"""
+use rsbinder::get_interface;
+
+use aidl::android::hardware::boot::IBootControl::IBootControl;
+
+fn main() -> rsbinder::Result<()> {
+    let boot: Strong<dyn IBootControl> =
+        get_interface("android.hardware.boot.IBootControl/default")?;
+
+    println!("slots = {}", boot.getNumberSlots()?);
+    println!("current = {}", boot.getCurrentSlot()?);
+
+    Ok(())
+}
+"""
+
 - `FfiBootSlotControl` for the `boot_control_module_t` HAL used on Android 8-era devices. [android.googlesource](https://android.googlesource.com/platform/hardware/libhardware/+/android16-qpr2-release/include_all/hardware/boot_control.h)
 
 ## Fallback logic

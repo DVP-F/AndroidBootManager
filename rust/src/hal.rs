@@ -7,9 +7,10 @@
 use crate::error::{BootError, Result};
 
 pub trait BootControl {
+    #![allow(dead_code)]
     fn get_current_slot(&self) -> Result<u32>;
-    fn get_number_slots(&self) -> Result<u32>;
     fn set_active_boot_slot(&self, slot: u32) -> Result<()>;
+    fn mark_boot_successful(&self) -> Result<()>;
 }
 
 pub struct FakeBootControl;
@@ -25,33 +26,33 @@ impl BootControl for FakeBootControl {
         Ok(0)
     }
 
-    fn get_number_slots(&self) -> Result<u32> {
-        Ok(2)
+    fn set_active_boot_slot(&self, _slot: u32) -> Result<()> {
+        Ok(())
     }
 
-    fn set_active_boot_slot(&self, _slot: u32) -> Result<()> {
+    fn mark_boot_successful(&self) -> Result<()> {
         Ok(())
     }
 }
 
-pub struct HalBootControl;
+pub struct AidlBootControl;
 
-impl HalBootControl {
+impl AidlBootControl {
     pub fn new() -> Result<Self> {
         Err(BootError::HalUnavailable)
     }
 }
 
-impl BootControl for HalBootControl {
+impl BootControl for AidlBootControl {
     fn get_current_slot(&self) -> Result<u32> {
         Err(BootError::HalUnavailable)
     }
 
-    fn get_number_slots(&self) -> Result<u32> {
+    fn set_active_boot_slot(&self, _slot: u32) -> Result<()> {
         Err(BootError::HalUnavailable)
     }
 
-    fn set_active_boot_slot(&self, _slot: u32) -> Result<()> {
+    fn mark_boot_successful(&self) -> Result<()> {
         Err(BootError::HalUnavailable)
     }
 }

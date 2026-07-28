@@ -10,3 +10,7 @@ crate-type = ["cdylib"]
 jni = "0.22.4"
 thiserror = "2"
 log = "0.4"
+rsbinder = "0.10"
+
+[build-dependencies]
+rsbinder-aidl = "0.10"

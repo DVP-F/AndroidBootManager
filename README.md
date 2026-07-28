@@ -4,7 +4,7 @@ Copyright (c) 2026 DVP-F/Carnx00
 Licensed under the GNU General Public License v3.0 (GPLv3).  
 SPDX-License-Identifier: GPL-3.0-only
 
-ships with gradlew and gradle info/config  
+ships with gradle wrapper and gradle info/config  
 
 missing for complete workspace:  
 
@@ -21,6 +21,7 @@ see [NOTICE.md](/NOTICE.md)
 - BootManager ; GPLv3  
 - gradle wrapper ; Apache-2.0  
 - Reload icon ; MIT   
+- AOSP files ; Apache-2.0  
 
 ## Build targets  
 
