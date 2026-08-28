@@ -5,8 +5,11 @@ use std::path::PathBuf;
 // SPDX-License-Identifier: GPL-3.0-only
 
 fn main() {
-    // first ensure generation dir is present
-    let _ = std::fs::create_dir_all("src/generated");
+    // overwrite envvar (only on rsbinder-aidl v0.10.x)
+    std::env::set_var(
+        "OUT_DIR",
+        std::env::var_os("CARGO_MANIFEST_DIR").unwrap(),
+    );
     // then build aidl dependency
     rsbinder_aidl::Builder::new()
         .source(PathBuf::from(

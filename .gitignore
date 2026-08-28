@@ -15,3 +15,4 @@ rust/target/
 *.lock
 *jniLibs*
 .kotlin*
+rust/src/generated/aidl_boot.rs

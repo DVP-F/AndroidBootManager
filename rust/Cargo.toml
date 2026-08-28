@@ -18,3 +18,8 @@ rustix = {
 
 [build-dependencies]
 rsbinder-aidl = "0.10"
+
+[features]
+aidl = []
+hidl = []
+legacy-ffi = []

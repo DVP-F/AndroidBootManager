@@ -34,13 +34,13 @@ const BACKEND_FFI_ENABLED: bool = true;
 #[cfg(not(feature = "legacy-ffi"))]
 const BACKEND_FFI_ENABLED: bool = false;
 
-//! Fallback chain:
-//! ```
-//! AIDL if on; then
-//! HIDL if on; then
-//! FFI if on; then
-//! Fake
-//! ```
+//? Fallback chain:
+//? ```
+//? AIDL if on; then
+//? HIDL if on; then
+//? FFI if on; then
+//? Fake
+//? ```
 
 pub struct BootManager {
     backend: Box<dyn BootControl + Send + Sync>,
