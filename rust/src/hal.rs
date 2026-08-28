@@ -14,43 +14,55 @@ pub trait BootControl {
     fn set_active_boot_slot(&self, slot: u32) -> Result<()>;
 }
 
-pub struct FakeBootControl;
+mod fake_bc {
+    pub struct FakeBootControl;
 
-impl FakeBootControl {
-    pub fn new() -> Self {
-        Self
+    impl FakeBootControl {
+        pub fn new() -> Self {
+            Self
+        }
+        const __FAKE :bool = true;
+    }
+
+    impl BootControl for FakeBootControl {
+        fn get_current_slot(&self) -> Result<u32> {
+            Ok(0)
+        }
+
+        fn set_active_boot_slot(&self, _slot: u32) -> Result<()> {
+            Ok(())
+        }
     }
 }
 
-impl BootControl for FakeBootControl {
-    fn get_current_slot(&self) -> Result<u32> {
-        Ok(0)
+mod aidl_bc {
+    pub struct AidlBootControl {
+        boot: Strong<dyn IBootControl>,
     }
 
-    fn set_active_boot_slot(&self, _slot: u32) -> Result<()> {
-        Ok(())
+    impl AidlBootControl {
+        pub fn new() -> Result<Self> {
+            let boot: Strong<dyn IBootControl> = 
+                get_interface("android.hardware.boot.IBootControl/default")
+                .map_err(|_| BootError::HalUnavailable)?;
+            Ok(Self { boot })
+        }
+        const __FAKE :bool = false;
+    }
+
+    impl BootControl for AidlBootControl {
+        fn get_current_slot(&self) -> Result<u32> {
+            Err(BootError::HalUnavailable)
+        }
+
+        fn set_active_boot_slot(&self, _slot: u32) -> Result<()> {
+            Err(BootError::HalUnavailable)
+        }
     }
 }
 
-pub struct AidlBootControl {
-    boot: Strong<dyn IBootControl>,
+mod hidl_bc {
 }
 
-impl AidlBootControl {
-    pub fn new() -> Result<Self> {
-        let boot: Strong<dyn IBootControl> = 
-            get_interface("android.hardware.boot.IBootControl/default")
-            .map_err(|_| BootError::HalUnavailable)?;
-        Ok(Self { boot })
-    }
-}
-
-impl BootControl for AidlBootControl {
-    fn get_current_slot(&self) -> Result<u32> {
-        Err(BootError::HalUnavailable)
-    }
-
-    fn set_active_boot_slot(&self, _slot: u32) -> Result<()> {
-        Err(BootError::HalUnavailable)
-    }
+mod ffi_bc {
 }

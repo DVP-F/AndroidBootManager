@@ -5,20 +5,42 @@
 //* SPDX-License-Identifier: GPL-3.0-only
 
 use crate::error::{BootError, Result};
-use crate::hal::{BootControl, FakeBootControl, AidlBootControl};
+use crate::hal::{
+    BootControl,
+    fake_bc::FakeBootControl,
+    aidl_bc::AidlBootControl,
+    // hidl_bc::HidlBootControl,
+    // ffi_bc::FFIBootControl,
+};
 
-// AIDL is on by default, unless legacy-ffi is enabled without aidl.
+//? AIDL is on by default, unless legacy-ffi is enabled without aidl.
 #[cfg(not(all(feature = "legacy-ffi", not(feature = "aidl"))))]
 const BACKEND_AIDL_ENABLED: bool = true;
 
 #[cfg(all(feature = "legacy-ffi", not(feature = "aidl")))]
 const BACKEND_AIDL_ENABLED: bool = false;
 
+//? HIDL is off by default, only on when the "hidl" feature is enabled.
+#[cfg(feature = "hidl")]
+const BACKEND_HIDL_ENABLED: bool = true;
+
+#[cfg(not(feature = "hidl"))]
+const BACKEND_HIDL_ENABLED: bool = false;
+
+//? FFI is off by default, only on when the "legacy-ffi" feature is enabled.
 #[cfg(feature = "legacy-ffi")]
 const BACKEND_FFI_ENABLED: bool = true;
 
 #[cfg(not(feature = "legacy-ffi"))]
 const BACKEND_FFI_ENABLED: bool = false;
+
+//! Fallback chain:
+//! ```
+//! AIDL if on; then
+//! HIDL if on; then
+//! FFI if on; then
+//! Fake
+//! ```
 
 pub struct BootManager {
     backend: Box<dyn BootControl + Send + Sync>,
