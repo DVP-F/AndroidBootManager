@@ -8,9 +8,13 @@ crate-type = ["cdylib"]
 
 [dependencies]
 jni = "0.22.4"
-thiserror = "2"
-log = "0.4"
+thiserror = "2.0.20"
+log = "0.4.34"
 rsbinder = "0.10"
+rustix = {
+    version = "1.1",
+    features = ["fs"]
+}
 
 [build-dependencies]
 rsbinder-aidl = "0.10"

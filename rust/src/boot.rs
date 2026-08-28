@@ -7,6 +7,19 @@
 use crate::error::{BootError, Result};
 use crate::hal::{BootControl, FakeBootControl, AidlBootControl};
 
+// AIDL is on by default, unless legacy-ffi is enabled without aidl.
+#[cfg(not(all(feature = "legacy-ffi", not(feature = "aidl"))))]
+const BACKEND_AIDL_ENABLED: bool = true;
+
+#[cfg(all(feature = "legacy-ffi", not(feature = "aidl")))]
+const BACKEND_AIDL_ENABLED: bool = false;
+
+#[cfg(feature = "legacy-ffi")]
+const BACKEND_FFI_ENABLED: bool = true;
+
+#[cfg(not(feature = "legacy-ffi"))]
+const BACKEND_FFI_ENABLED: bool = false;
+
 pub struct BootManager {
     backend: Box<dyn BootControl + Send + Sync>,
 }
