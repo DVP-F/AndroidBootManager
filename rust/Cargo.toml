@@ -10,14 +10,21 @@ crate-type = ["cdylib"]
 jni = "0.22.4"
 thiserror = "2.0.20"
 log = "0.4.34"
-rsbinder = "0.10"
+async-trait = "0.1.*"
 rustix = {
     version = "1.1",
     features = ["fs"]
 }
+rsbinder = {
+    version = "0.10",
+    features = ["async"]
+}
 
 [build-dependencies]
-rsbinder-aidl = "0.10"
+rsbinder-aidl = {
+    version = "0.10",
+    features = ["async"]
+}
 
 [features]
 aidl = []
