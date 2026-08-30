@@ -9,30 +9,9 @@ use crate::hal::{
     BootControl,
     fake_bc::FakeBootControl,
     aidl_bc::AidlBootControl,
-    // hidl_bc::HidlBootControl,
-    // ffi_bc::FFIBootControl,
+    hidl_bc::HidlBootControl,
+    ffi_bc::FFIBootControl,
 };
-
-//? AIDL is on by default, unless legacy-ffi is enabled without aidl.
-#[cfg(not(all(feature = "legacy-ffi", not(feature = "aidl"))))]
-const BACKEND_AIDL_ENABLED: bool = true;
-
-#[cfg(all(feature = "legacy-ffi", not(feature = "aidl")))]
-const BACKEND_AIDL_ENABLED: bool = false;
-
-//? HIDL is off by default, only on when the "hidl" feature is enabled.
-#[cfg(feature = "hidl")]
-const BACKEND_HIDL_ENABLED: bool = true;
-
-#[cfg(not(feature = "hidl"))]
-const BACKEND_HIDL_ENABLED: bool = false;
-
-//? FFI is off by default, only on when the "legacy-ffi" feature is enabled.
-#[cfg(feature = "legacy-ffi")]
-const BACKEND_FFI_ENABLED: bool = true;
-
-#[cfg(not(feature = "legacy-ffi"))]
-const BACKEND_FFI_ENABLED: bool = false;
 
 //? Fallback chain:
 //? ```
@@ -49,10 +28,16 @@ pub struct BootManager {
 impl Default for BootManager {
     fn default() -> Self {
         Self {
-            backend: match AidlBootControl::new() {
+            backend: match AidlBootControl::new() { // Returns Err if feature `aidl` is disabled
                 Ok(hal) => Box::new(hal),
-                Err(_) => Box::new(FakeBootControl::new()),
-            },
+                Err(_) => match HidlBootControl::new() { // Returns Err if feature `hidl` is disabled
+                    Ok(hal) => Box::new(hal),
+                    Err(_) => match FFIBootControl::new() { // Returns Err if feature `legacy_ffi` is disabled
+                        Ok(hal) => Box::new(hal),
+                        Err(_) => Box::new(FakeBootControl::new())
+                    }
+                }
+            }
         }
     }
 }

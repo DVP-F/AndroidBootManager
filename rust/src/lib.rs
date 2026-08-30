@@ -24,7 +24,10 @@ pub extern "system" fn Java_com_carnx_bootmanager_BootNative_nativeGetCurrentSlo
     _env: EnvUnowned,
     _class: JClass,
 ) -> jint {
-    match BootManager::default().get_current_slot() {
+    log::error!("currentSlot: JNI enter");
+    let result =  BootManager::default().get_current_slot();
+    log::error!("currentSlot: BootManager returned: {:?}", result);
+    match result {
         Ok(v) => v as jint,
         Err(_) => -1,
     }

@@ -15,6 +15,8 @@ pub enum BootError {
     InvalidSlot { slot: u32, slots: u32 },
     #[error("hal unavailable")]
     HalUnavailable,
+    #[error("fake controller")]
+    FakeControl,
     #[error("permission denied")]
     PermissionDenied,
     #[error("unknown error")]
