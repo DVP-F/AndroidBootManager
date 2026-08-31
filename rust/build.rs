@@ -5,7 +5,7 @@ use std::path::PathBuf;
 // SPDX-License-Identifier: GPL-3.0-only
 
 fn main() {
-    // overwrite envvar (only on rsbinder-aidl v0.10.x)
+    // overwrite envvar (for rsbinder-aidl v0.10.x)
     std::env::set_var(
         "OUT_DIR",
         std::env::var_os("CARGO_MANIFEST_DIR").unwrap(),

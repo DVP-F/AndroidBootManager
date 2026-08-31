@@ -10,6 +10,7 @@ use std::time::Duration;
 use crate::error::{Result, BootError};
 use rsbinder::{hub::check_interface, Strong};
 use crate::generated::aidl_boot::android::hardware::boot::IBootControl::IBootControl;
+use crate::ffi_helper::BootControlHal;
 
 pub trait BootControl {
     #![allow(dead_code)]
@@ -89,9 +90,8 @@ pub mod aidl_bc {
 //? If AIDL feature is not on:
 #[cfg(all(feature = "legacy-ffi", not(feature = "aidl")))]
 pub mod aidl_bc {
-    use super::{BootControl, BootError, Result, Strong, IBootControl};
+    use super::{BootControl, BootError, Result};
     pub struct AidlBootControl {
-        boot: Strong<dyn IBootControl>,
     }
 
     impl AidlBootControl {
@@ -143,8 +143,50 @@ pub mod hidl_bc {
 
 
 //? FFI is off by default, only on when the "legacy-ffi" feature is enabled.
-#[cfg(feature = "legacy-ffi")]
+// #[cfg(feature = "legacy-ffi")]
 pub mod ffi_bc {
+    use super::{BootControl, BootError, Result, Strong, IBootControl, BootControlHal};
+    pub struct FFIBootControl {
+        boot: Strong<dyn IBootControl>,
+    }
+
+    impl FFIBootControl {
+        pub fn new() {
+            let hal = BootControlHal::load()?;
+            #[allow(unsafe_code)]
+            unsafe {
+                let boot: Strong<dyn IBootControl> = hal.module();
+            }
+
+            unsafe {
+                // Call init if available
+                if let Some(init) = self.boot.init {
+                    init(module as *mut _);
+                }
+
+                // // Get number of slots
+                // if let Some(get_num) = self.boot.getNumberSlots {
+                //     let num = get_num(self.boot as *mut _);
+                //     println!("Number of slots: {}", num);
+                // }
+
+                // Get current slot
+                if let Some(get_cur) = self.boot.getCurrentSlot {
+                    let cur = get_cur(self.boot as *mut _);
+                    println!("Current slot: {}", cur);
+                }
+
+                // Get suffix
+                if let Some(get_suffix) = self.boot.getSuffix {
+                    let suffix_ptr = get_suffix(self.boot as *mut _, 0);
+                    if !suffix_ptr.is_null() {
+                        let suffix = CStr::from_ptr(suffix_ptr).to_string_lossy();
+                        println!("Slot 0 suffix: {}", suffix);
+                    }
+                }
+            }
+        }
+    }
 }
 
 //? If FFI is off

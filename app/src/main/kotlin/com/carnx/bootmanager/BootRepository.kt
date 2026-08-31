@@ -9,7 +9,6 @@ data class Result(
     val msg: String
 )
 
-//! remapping to more useful labels. 0 = A ; 1 = B
 class BootRepository {
     // boilerplate the jni funcs
     fun currentSlot(): Result {
@@ -21,17 +20,18 @@ class BootRepository {
             return Result(false, "Failed to load!")
         }
         // success
-        return Result(true,"Current boot slot: ${if (slot == 0) "A" else "B"}")
+        return Result(true,"Current boot slot: ${if (slot == 0) "A (" + slot + ")" else "B (" + slot + ")"}")
     }
     fun switchTo(slot: Int): Result {
         require(slot in 0..1) { "Slot must be either 0 or 1" }
         val status = BootNative.nativeSetActiveSlot(slot)
+        val currentslot = BootNative.nativeGetCurrentSlot()
         return Result(
             status,
             if (status)
-                "Set slot to: ${if (slot == 0) "A" else "B"}"
+                "Set slot to: ${if (slot == 0) "A (" + slot + ")" else "B (" + slot + ")"}"
             else
-                "Failed! Current slot: ${if (BootNative.nativeGetCurrentSlot() == 0) "A" else "B"}!"
+                "Failed! Current slot: ${if (currentslot == 0) "A (" + slot + ")" else "B (" + slot + ")"}!"
         )
     }
 }
