@@ -1,5 +1,5 @@
 use std::os::raw::{c_char, c_int, c_uint, c_void};
-use std::ffi::{CStr, CString};
+use std::ffi::CString;
 use std::ptr;
 use std::io;
 
@@ -92,8 +92,8 @@ impl BootControlHal {
         }
     }
 
-    pub unsafe fn module(&self) -> &boot_control_module_t {
-        &*self.module
+    pub unsafe fn module(&self) -> *mut boot_control_module_t {
+        self.module
     }
 }
 

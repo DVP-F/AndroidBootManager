@@ -8,9 +8,6 @@ use std::sync::mpsc;
 use std::thread;
 use std::time::Duration;
 use crate::error::{Result, BootError};
-use rsbinder::{hub::check_interface, Strong};
-use crate::generated::aidl_boot::android::hardware::boot::IBootControl::IBootControl;
-use crate::ffi_helper::BootControlHal;
 
 pub trait BootControl {
     #![allow(dead_code)]
@@ -42,7 +39,9 @@ pub mod fake_bc {
 //? AIDL is on by default, unless legacy-ffi is enabled without aidl.
 #[cfg(not(all(feature = "legacy-ffi", not(feature = "aidl"))))]
 pub mod aidl_bc {
-    use super::{BootControl, BootError, Result, Strong, check_interface, IBootControl, mpsc, thread, Duration};
+    use super::{BootControl, BootError, Result, mpsc, thread, Duration};
+    use crate::generated::aidl_boot::android::hardware::boot::IBootControl::IBootControl;
+    use rsbinder::{hub::check_interface, Strong};
     pub struct AidlBootControl {
         boot: Strong<dyn IBootControl>,
     }
@@ -143,49 +142,57 @@ pub mod hidl_bc {
 
 
 //? FFI is off by default, only on when the "legacy-ffi" feature is enabled.
-// #[cfg(feature = "legacy-ffi")]
+#[cfg(feature = "legacy-ffi")]
 pub mod ffi_bc {
-    use super::{BootControl, BootError, Result, Strong, IBootControl, BootControlHal};
+    use super::{BootControl, BootError, Result};
+    use crate::ffi_helper::{BootControlHal, boot_control_module_t};
     pub struct FFIBootControl {
-        boot: Strong<dyn IBootControl>,
+        boot: *mut boot_control_module_t,
     }
 
     impl FFIBootControl {
-        pub fn new() {
-            let hal = BootControlHal::load()?;
-            #[allow(unsafe_code)]
-            unsafe {
-                let boot: Strong<dyn IBootControl> = hal.module();
-            }
-
+        pub fn new() -> Result<Self> {
+            let hal = BootControlHal::load()
+                    .map_err(|_| BootError::HalUnavailable)?;
+            let boot = unsafe { hal.module() };
             unsafe {
                 // Call init if available
-                if let Some(init) = self.boot.init {
-                    init(module as *mut _);
+                if let Some(init) = (*boot).init {
+                    init(boot);
                 }
+            }
+            Ok(Self { boot })
+        }
+    }
 
-                // // Get number of slots
-                // if let Some(get_num) = self.boot.getNumberSlots {
-                //     let num = get_num(self.boot as *mut _);
-                //     println!("Number of slots: {}", num);
-                // }
-
-                // Get current slot
-                if let Some(get_cur) = self.boot.getCurrentSlot {
-                    let cur = get_cur(self.boot as *mut _);
-                    println!("Current slot: {}", cur);
-                }
-
-                // Get suffix
-                if let Some(get_suffix) = self.boot.getSuffix {
-                    let suffix_ptr = get_suffix(self.boot as *mut _, 0);
-                    if !suffix_ptr.is_null() {
-                        let suffix = CStr::from_ptr(suffix_ptr).to_string_lossy();
-                        println!("Slot 0 suffix: {}", suffix);
-                    }
+    impl BootControl for FFIBootControl {
+        fn get_current_slot(&self) -> Result<u32> {
+            unsafe {
+                if let Some(get_cur) = (*self.boot).getCurrentSlot {
+                    Ok(get_cur(self.boot as *mut _))
+                } else {
+                    Err(BootError::HalUnavailable)
                 }
             }
         }
+
+        fn set_active_boot_slot(&self, _slot: u32) -> Result<()> {
+            Err(BootError::HalUnavailable)
+        }
+
+        // // Get number of slots
+        // if let Some(get_num) = self.boot.getNumberSlots {
+        //     let num = get_num(self.boot as *mut _);
+        //     println!("Number of slots: {}", num);
+        // }
+        // // Get suffix
+        // if let Some(get_suffix) = self.boot.getSuffix {
+        //     let suffix_ptr = get_suffix(self.boot as *mut _, 0);
+        //     if !suffix_ptr.is_null() {
+        //         let suffix = CStr::from_ptr(suffix_ptr).to_string_lossy();
+        //         println!("Slot 0 suffix: {}", suffix);
+        //     }
+        // }
     }
 }
 

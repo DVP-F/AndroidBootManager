@@ -11,6 +11,7 @@ use jni::EnvUnowned; // instead of deprecated JNIEnv - stick to ffi safe if poss
 mod boot;
 mod error;
 mod hal;
+mod ffi_helper;
 mod generated;
 
 use boot::BootManager;
