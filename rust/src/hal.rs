@@ -146,9 +146,14 @@ pub mod hidl_bc {
 pub mod ffi_bc {
     use super::{BootControl, BootError, Result};
     use crate::ffi_helper::{BootControlHal, boot_control_module_t};
+
     pub struct FFIBootControl {
+        hal: BootControlHal,
         boot: *mut boot_control_module_t,
     }
+
+    unsafe impl Send for FFIBootControl {}
+    unsafe impl Sync for FFIBootControl {}
 
     impl FFIBootControl {
         pub fn new() -> Result<Self> {
@@ -161,7 +166,8 @@ pub mod ffi_bc {
                     init(boot);
                 }
             }
-            Ok(Self { boot })
+            // retain a handle to hal, so the module isnt closed yet.
+            Ok(Self { hal, boot })
         }
     }
 

@@ -9,8 +9,7 @@ use thiserror::Error;
 pub type Result<T> = std::result::Result<T, BootError>;
 
 #[allow(dead_code)] // rustc complains about PermissionDenied and Unknown. This is not an issue.
-#[cfg_attr(debug_assertions, derive(Debug))] // Derive Debug for dev builds only
-#[derive(Error)]
+#[derive(Error, Debug)] // Debug impl is required by std::error::Error
 pub enum BootError {
     #[error("invalid slot {slot}, device has {slots} slots")]
     InvalidSlot { slot: u32, slots: u32 },
